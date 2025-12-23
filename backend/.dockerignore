@@ -1,0 +1,15 @@
+# Docker Ignore File for Backend
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv
+env
+.env
+.git
+.gitignore
+README.md
+*.md
+.DS_Store
+test-model.py

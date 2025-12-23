@@ -1,5 +1,6 @@
 import os
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -13,6 +14,15 @@ if not os.getenv("GOOGLE_API_KEY"):
     raise ValueError("GOOGLE_API_KEY is missing from .env file")
 
 app = FastAPI(title="Gemini Idea Improver")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Next.js frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class IdeaRequest(BaseModel):
     idea: str
