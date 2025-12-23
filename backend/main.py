@@ -15,14 +15,7 @@ if not os.getenv("GOOGLE_API_KEY"):
 
 app = FastAPI(title="Gemini Idea Improver")
 
-# Add CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js frontend
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+
 
 class IdeaRequest(BaseModel):
     idea: str
