@@ -15,6 +15,13 @@ if not os.getenv("GOOGLE_API_KEY"):
 
 app = FastAPI(title="Gemini Idea Improver")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class IdeaRequest(BaseModel):
