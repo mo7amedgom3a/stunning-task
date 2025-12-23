@@ -6,7 +6,7 @@ interface IdeaResponse {
   improved_content: string
 }
 
-const API_BASE_URL =  "http://54.227.78.194:8000" // server puplic IP
+const API_BASE_URL =  "54.227.78.194:8000" // server puplic IP
 
 export async function improveIdea(idea: string): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/improve`, {
@@ -20,7 +20,7 @@ export async function improveIdea(idea: string): Promise<string> {
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
-
+  
   const data: IdeaResponse = await response.json()
   return data.improved_content
 }
