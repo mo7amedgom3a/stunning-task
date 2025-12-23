@@ -6,7 +6,7 @@ interface IdeaResponse {
   improved_content: string
 }
 
-const API_BASE_URL =  "54.227.78.194:8000" // server puplic IP
+const API_BASE_URL =  "http://ec2-54-227-78-194.compute-1.amazonaws.com:8000" // server dns 
 
 export async function improveIdea(idea: string): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/improve`, {
