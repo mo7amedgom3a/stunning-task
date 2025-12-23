@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/improve",
+      "destination": "http://ec2-54-227-78-194.compute-1.amazonaws.com:8000/improve"
+    }
+  ]
+}
