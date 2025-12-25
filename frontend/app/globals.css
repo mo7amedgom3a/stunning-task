@@ -160,46 +160,66 @@
   animation: neon-pulse 2s ease-in-out infinite;
 }
 
-/* Animated gradient border for magic input */
-@keyframes gradient-border {
-  0% {
-    border-color: rgba(139, 92, 246, 0.5); /* Purple */
-  }
-  25% {
-    border-color: rgba(236, 72, 153, 0.5); /* Pink */
-  }
-  50% {
-    border-color: rgba(249, 115, 22, 0.5); /* Orange */
-  }
-  75% {
-    border-color: rgba(59, 130, 246, 0.5); /* Blue */
-  }
-  100% {
-    border-color: rgba(139, 92, 246, 0.5); /* Purple */
-  }
+/* Border Trail Animation with offset-path */
+:root {
+  --border-radius: 12;
+  --border-width: 3;
+  --trail-size: 40;
+  --trail-speed: 8s;
 }
 
-@keyframes gradient-glow {
-  0% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 10px 40px rgba(139, 92, 246, 0.2);
-  }
-  25% {
-    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3), 0 10px 40px rgba(236, 72, 153, 0.2);
-  }
-  50% {
-    box-shadow: 0 0 20px rgba(249, 115, 22, 0.3), 0 10px 40px rgba(249, 115, 22, 0.2);
-  }
-  75% {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 10px 40px rgba(59, 130, 246, 0.2);
-  }
-  100% {
-    box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 10px 40px rgba(139, 92, 246, 0.2);
+@keyframes journey {
+  to {
+    offset-distance: 100%;
   }
 }
 
 .magic-input-border {
   position: relative;
-  border: 2px solid transparent;
-  animation: gradient-border 4s ease-in-out infinite, gradient-glow 4s ease-in-out infinite;
+  container-type: inline-size;
+}
+
+.border-container {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 0 0 0 round calc(var(--border-radius) * 1px));
+  border-radius: calc(var(--border-radius) * 1px);
+  background: color-mix(in lch, white, black 8%);
+  z-index: -1;
+  border: 0;
+  container-type: inline-size;
+  pointer-events: none;
+}
+
+.border-trail {
+  width: calc(var(--trail-size) * 1cqmin);
+  aspect-ratio: 2 / 1;
+  position: absolute;
+  background: radial-gradient(
+    100% 100% at right,
+    #ef4444,
+    #ec4899 40%,
+    transparent 70%
+  );
+  offset-path: border-box;
+  offset-anchor: 100% 50%;
+  animation: journey var(--trail-speed) infinite linear;
+  pointer-events: none;
+}
+
+.border-trail:nth-child(2) {
+  animation-delay: calc(var(--trail-speed) / 3);
+}
+
+.border-trail:nth-child(3) {
+  animation-delay: calc(var(--trail-speed) / 1.5);
+}
+
+.magic-input-content {
+  background: linear-gradient(white, white) padding-box, transparent;
+  border: calc(var(--border-width) * 1px) solid transparent;
+  border-radius: calc(var(--border-radius) * 1px);
+  position: relative;
+  z-index: 1;
 }
 

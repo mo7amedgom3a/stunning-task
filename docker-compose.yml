@@ -17,5 +17,5 @@ services:
     network_mode: host
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
-      - ENV=dev
     restart: unless-stopped
+

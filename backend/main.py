@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -58,14 +59,26 @@ output_parser = StrOutputParser()
 chain = prompt_template | llm | output_parser
 
 
-@app.post("/improve", response_model=IdeaResponse)
+@app.post("/improve")
 async def improve_idea(request: IdeaRequest):
-    try:
-        # Asynchronous invocation of Gemini
-        response_text = await chain.ainvoke({"idea": request.idea})
-        return IdeaResponse(improved_content=response_text)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    async def stream_generator():
+        try:
+            # Stream tokens from LangChain using astream()
+            async for chunk in chain.astream({"idea": request.idea}):
+                # Send each chunk as it arrives
+                yield chunk
+        except Exception as e:
+            # In case of error, send error message
+            yield f"\n\nError: {str(e)}"
+    
+    return StreamingResponse(
+        stream_generator(),
+        media_type="text/plain",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no"  # Disable buffering for nginx
+        }
+    )
 
 @app.get("/health")
 def health_check():

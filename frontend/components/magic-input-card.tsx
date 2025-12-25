@@ -32,12 +32,16 @@ export function MagicInputCard() {
 
     setIsImproving(true)
     setError("")
+    setImprovedText("") // Clear previous result
 
     try {
-      const improvedContent = await improveIdea(text)
-      setImprovedText(improvedContent)
+      // Use streaming API with callback for progressive updates
+      const improvedContent = await improveIdea(text, (chunk) => {
+        // Update the improved text progressively as chunks arrive
+        setImprovedText((prev) => prev + chunk)
+      })
       
-      // Detect output direction
+      // Detect output direction based on final content
       setOutputDir(isArabic(improvedContent) ? "rtl" : "ltr")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to improve idea. Please try again.")
@@ -49,51 +53,61 @@ export function MagicInputCard() {
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-4xl space-y-6">
-      {/* Main Input Card */}
-      <div className="magic-input-border rounded-xl bg-white p-6 shadow-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(139,92,246,0.3)]">
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="أنشئ موقعًا ويب لخلاصتك"
-          dir={inputDir}
-          className={`min-h-[200px] w-full resize-none border-none bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none ${
-            inputDir === "rtl" ? "text-right" : "text-left"
-          }`}
-          maxLength={500}
-        />
+      {/* Main Input Card with Border Trail */}
+      <div className="magic-input-border">
+        {/* Animated Border Container */}
+        <div className="border-container">
+          <div className="border-trail" />
+          <div className="border-trail" />
+          <div className="border-trail" />
+        </div>
+        
+        {/* Content */}
+        <div className="magic-input-content p-6 shadow-2xl transition-all duration-300 hover:shadow-[0_20px_60px_rgba(239,68,68,0.2)]">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="أنشئ موقعًا ويب لخلاصتك"
+            dir={inputDir}
+            className={`min-h-[200px] w-full resize-none border-none bg-transparent text-base text-foreground placeholder:text-muted-foreground focus:outline-none ${
+              inputDir === "rtl" ? "text-right" : "text-left"
+            }`}
+            maxLength={500}
+          />
 
-        {/* Bottom Toolbar */}
-        <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">{text.length}/500</span>
-            <button className="text-muted-foreground transition-colors hover:text-foreground">
-              <Info className="size-5" />
-            </button>
-            <button className="text-muted-foreground transition-colors hover:text-foreground">
-              <Mic className="size-5" />
-            </button>
-            <button className="text-muted-foreground transition-colors hover:text-foreground">
-              <FileText className="size-5" />
-            </button>
-            <button className="text-muted-foreground transition-colors hover:text-foreground">
-              <ImageIcon className="size-5" />
-            </button>
+          {/* Bottom Toolbar */}
+          <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">{text.length}/500</span>
+              <button className="text-muted-foreground transition-colors hover:text-foreground">
+                <Info className="size-5" />
+              </button>
+              <button className="text-muted-foreground transition-colors hover:text-foreground">
+                <Mic className="size-5" />
+              </button>
+              <button className="text-muted-foreground transition-colors hover:text-foreground">
+                <FileText className="size-5" />
+              </button>
+              <button className="text-muted-foreground transition-colors hover:text-foreground">
+                <ImageIcon className="size-5" />
+              </button>
+            </div>
+
+            <Button
+              onClick={handleImprove}
+              disabled={!text.trim() || isImproving}
+              className="bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:from-purple-700 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-200"
+            >
+              {isImproving ? (
+                <span>جاري التحسين...</span>
+              ) : (
+                <>
+                  <Sparkles className="size-4" />
+                  <span>حسِّن فكرتك</span>
+                </>
+              )}
+            </Button>
           </div>
-
-          <Button
-            onClick={handleImprove}
-            disabled={!text.trim() || isImproving}
-            className="bg-gradient-to-r from-purple-600 to-purple-500 text-white hover:from-purple-700 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            {isImproving ? (
-              <span>جاري التحسين...</span>
-            ) : (
-              <>
-                <Sparkles className="size-4" />
-                <span>حسِّن فكرتك</span>
-              </>
-            )}
-          </Button>
         </div>
       </div>
 
